@@ -1,0 +1,4 @@
+namespace: juice-shop
+resources:
+- resources/deployment.yaml
+- resources/service.yaml

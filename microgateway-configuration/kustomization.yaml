@@ -1,0 +1,6 @@
+namespace: juice-shop
+resources:
+- resources/sidecargateway.yaml
+- resources/contentsecurity.yaml
+- resources/denyrules.yaml
+- resources/headerrewrites.yaml

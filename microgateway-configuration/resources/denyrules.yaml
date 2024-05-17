@@ -1,0 +1,10 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: DenyRules
+metadata:
+  name: demo-deny-rules
+spec:
+  request:
+    builtIn:
+      settings:
+        level: Strict
+        threatHandlingMode: Block

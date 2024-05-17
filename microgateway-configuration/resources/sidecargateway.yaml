@@ -1,0 +1,15 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: SidecarGateway
+metadata:
+  name: demo-sidecargateway
+spec:
+  podSelector:
+    matchLabels:
+      app: juice-shop
+  applications:
+    - containerPort: 3000
+      routes:
+        - pathPrefix: /
+          secured:
+            contentSecurityRef:
+              name: demo-content-security

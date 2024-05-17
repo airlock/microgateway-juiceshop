@@ -1,0 +1,10 @@
+apiVersion: microgateway.airlock.com/v1alpha1
+kind: ContentSecurity
+metadata:
+  name: demo-content-security
+spec:
+  filter:
+    denyRulesRef:
+      name: demo-deny-rules
+  headerRewritesRef:
+    name: demo-header-rewrites
