@@ -8,3 +8,19 @@ spec:
       settings:
         level: Strict
         threatHandlingMode: Block
+      exceptions:
+        # Define a deny rule exception for the deny rule 'SQL'
+        # for the Header 'Sec-Websocket-Extensions' under the path '^/socket.io/'.
+        - blockedData:
+            header:
+              name:
+                matcher:
+                  exact: Sec-Websocket-Extensions
+          requestConditions:
+            path:
+              matcher:
+                prefix: /socket.io/
+            method:
+              - GET
+          ruleKeys:
+            - SQL

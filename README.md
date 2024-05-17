@@ -5,12 +5,10 @@ This repository contains and describes an example setup of the OWASP Juice-Shop 
 ## Setup Overview
 
 To deploy this example, you need a K8s cluster of your choice.
-For ease of use, we provide commands that spawn a pod to execute curl requests from within the cluster.
 
-Alternatively, we suggest using requests from your own command line or browser for a use case that is closer to every day user behaviour.
-As a requirement for such an approach, the service needs to be reachable from that command line or browser.
+To test the deployment and configuration, you can use a browser or curl from a command line.
 
-> **Note**: Making the application reachable, e.g., via NodePort or LoadBalancer, is not described here.
+Alternatively, we provide commands that spawn a pod to execute curl requests from within the cluster, if you want to test with solely cluster internal traffic.
 
 ### Deploy Airlock Microgateway 
 See Quick start guide [below](#quick-start-guide---microgateway-operator).
@@ -19,7 +17,7 @@ See Quick start guide [below](#quick-start-guide---microgateway-operator).
 
 The example creates:
 - a Deployment with the image from https://hub.docker.com/r/bkimminich/juice-shop
-- a ClusterIP Service for that deployment
+- a NodePort Service for that deployment listening to NodePort 30080
 
 ```bash
 kubectl apply -k juice-shop/
@@ -51,17 +49,22 @@ kubectl patch deployment juice-shop -p '{"spec": {"template": {"metadata": {"lab
 
 > **Note**: The patch command is used for demonstration purposes. It is recommended to add this label to the deployment resource file when managing applications on production.
 
+**Attack the juice shop to verify protection.**
+- You can retry the SQL Injection vulnerability suggested in the [section on the attack payload](#attack-string-login) and should now receive a Request Blocked message.
+
 ### Web app attack: SQL Injection Example
 #### Failed normal login
 
 Trying to login as user *admin* with any password results in an "Invalid email or password" error.
 
 <details open>
-<summary>Option A: Using dedicated pod</summary>
+<summary>Option A: Browser</summary>
 
-```bash
-kubectl run -n=juice-shop -it --restart=Never --rm curl --image=curlimages/curl -- curl -v juice-shop:3000/rest/user/login -H 'Content-Type: application/json' --data-raw $'{"email":"admin","password":"test"}'
-```
+Access the Juice Shop in a browser and navigate to Account > Login at the top right.
+
+Try logging in as *admin* with any password.
+
+!['Invalid email or password' without attack payload](images/failed-normal-login.png "Failed login attempt")
 </details>
 
 <details>
@@ -75,13 +78,11 @@ curl '<hostname>:<port>/rest/user/login' \
 </details>
 
 <details>
-<summary>Option C: Browser</summary>
+<summary>Option C: Using dedicated pod</summary>
 
-Access the Juice Shop in a browser and navigate to Account > Login at the top right.
-
-Try logging in as *admin* with any password.
-
-!['Invalid email or password' without attack payload](images/failed-normal-login.png "Failed login attempt")
+```bash
+kubectl run -n=juice-shop -it --restart=Never --rm curl --image=curlimages/curl -- curl -v juice-shop:3000/rest/user/login -H 'Content-Type: application/json' --data-raw $'{"email":"admin","password":"test"}'
+```
 </details>
 
 #### Attack string login
@@ -98,11 +99,14 @@ After protecting the Juice Shop with the Airlock Microgateway, the same attack w
 > **Hint**: Do not forget to logout for subsequent tests, if you were successful.
 
 <details open>
-<summary>Option A: Using curl pod</summary>
+<summary>Option A: Browser</summary>
 
-```bash
-kubectl run -n=juice-shop -it --restart=Never --rm curl --image=curlimages/curl -- curl -v juice-shop:3000/rest/user/login -H 'Content-Type: application/json' --data-raw $'{"email":"admin\' or 1=1--","password":"test"}'
-```
+Access the Juice Shop in a browser and navigate to Account > Login at the top right.
+
+Try logging in with username `admin' or 1=1 --` and any password.
+
+!['Successfully solved a challenge: Login Admin' when using attack payload](images/successful-sql-injection.png "Successful SQL Injection")
+!['Request blocked' when using attack payload](images/failed-sql-injection.png "Failed SQL Injection")
 </details>
 
 <details>
@@ -116,14 +120,11 @@ curl '<hostname>:<port>/rest/user/login' \
 </details>
 
 <details>
-<summary>Option C: Browser</summary>
+<summary>Option C: Using curl pod</summary>
 
-Access the Juice Shop in a browser and navigate to Account > Login at the top right.
-
-Try logging in with username `admin' or 1=1 --` and any password.
-
-!['Successfully solved a challenge: Login Admin' when using attack payload](images/successful-sql-injection.png "Successful SQL Injection")
-!['Request blocked' when using attack payload](images/failed-sql-injection.png "Failed SQL Injection")
+```bash
+kubectl run -n=juice-shop -it --restart=Never --rm curl --image=curlimages/curl -- curl -v juice-shop:3000/rest/user/login -H 'Content-Type: application/json' --data-raw $'{"email":"admin\' or 1=1--","password":"test"}'
+```
 </details>
 
 
