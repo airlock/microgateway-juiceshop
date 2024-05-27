@@ -28,7 +28,7 @@ kubectl apply -k juice-shop/
 - Use the SQL Injection vulnerability to gain access, as suggested in the [section on the attack payload](#attack-string-login).
 
 Screen recording "Attack the unprotected Juice Shop":<br>
-![Attack the unprotected Juice Shop](videos/attack-the-unprotected-juice-shop.mov "Attack the unprotected Juice Shop")
+![Attack the unprotected Juice Shop](https://github.com/airlock/microgateway-juiceshop/assets/143166124/e204a08d-dcfa-4299-848e-b0206b781970 "Attack the unprotected Juice Shop")
 
 ### Protect Web App: Airlock Microgateway Configuration
 
@@ -62,7 +62,7 @@ kubectl rollout status deployment juice-shop -n=juice-shop
 - You can retry the SQL Injection vulnerability suggested in the [section on the attack payload](#attack-string-login) and should now receive a Request Blocked message.
 
 Screen recording "Attack the protected Juice Shop":<br>
-![Attack the protected Juice Shop](videos/attack-the-protected-juice-shop.mov "Attack the protected Juice Shop")
+![Attack the protected Juice Shop](https://github.com/airlock/microgateway-juiceshop/assets/143166124/36045bff-73be-4be4-9bd2-0137632cdaea "Attack the protected Juice Shop")
 
 ### Web app attack: SQL Injection Example
 #### Failed normal login
