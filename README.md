@@ -29,7 +29,7 @@ kubectl apply -k juice-shop/
 
 Screen recording "Attack the unprotected Juice Shop":
 
-https://github.com/airlock/microgateway-juiceshop/assets/143166124/42ede1f8-7e50-42c7-8506-2f363b779c77
+https://github.com/airlock/microgateway-juiceshop/assets/143166124/deb49107-0e89-4fe5-a4fd-9ec47dbc3da4
 
 ### Protect Web App: Airlock Microgateway Configuration
 
