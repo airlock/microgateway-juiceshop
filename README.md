@@ -170,7 +170,7 @@ The instructions below provide a quick start guide for a "standard" Kubernetes s
 In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
 For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
 ### Obtain Airlock Microgateway License
-1. Either request a community or premium license
+1. Either request a community or premium licensegiut 
    * Community license: [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
    * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
 2. Check your inbox and save the license file microgateway-license.txt locally.
@@ -178,8 +178,9 @@ For an easy start in non-production environments, you may deploy the same cert-m
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
 ### Deploy cert-manager
 ```bash
-# Install cert-manager
-kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/?ref=4.4.1
+# Add the cert-manager repository and perform a Helm-based installation
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-manager --create-namespace --set crds.enabled=true --wait
 
 # Wait for the cert-manager to be up and running
 kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/instance=cert-manager
