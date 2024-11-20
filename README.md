@@ -170,7 +170,7 @@ The instructions below provide a quick start guide for a "standard" Kubernetes s
 In order to use Airlock Microgateway you need a license and the cert-manager. You may either request a community license free of charge or purchase a premium license.
 For an easy start in non-production environments, you may deploy the same cert-manager we are using internally for testing.
 ### Obtain Airlock Microgateway License
-1. Either request a community or premium licensegiut 
+1. Either request a community or premium license
    * Community license: [airlock.com/microgateway-community](https://airlock.com/en/microgateway-community)
    * Premium license: [airlock.com/microgateway-premium](https://airlock.com/en/microgateway-premium)
 2. Check your inbox and save the license file microgateway-license.txt locally.
