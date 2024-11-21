@@ -36,10 +36,10 @@ https://github.com/airlock/microgateway-juiceshop/assets/143166124/deb49107-0e89
 Apply the Airlock Microgateway configuration custom resources for the Juice Shop deployment.
 
 The configuration includes the following resources:
-- [SidecarGateway](https://docs.airlock.com/microgateway/4.2/#data/1661841842553.html) :  Link between the protected application and Airlock Microgateway
-- [ContentSecurity](https://docs.airlock.com/microgateway/4.2/#data/1659430054462.html) : Specifies the options to secure an upstream web application with a Microgateway Engine container
-- [DenyRules](https://docs.airlock.com/microgateway/4.2/#data/1667549240920.html) : Block malicious requests to upstream web applications
-- [HeaderRewrites](https://docs.airlock.com/microgateway/4.2/#data/1668421866216.html) : Header filtering/rewriting
+- [SidecarGateway](https://docs.airlock.com/microgateway/4.4/#data/1661841842553.html) :  Link between the protected application and Airlock Microgateway
+- [ContentSecurity](https://docs.airlock.com/microgateway/4.4/#data/1659430054462.html) : Specifies the options to secure an upstream web application with a Microgateway Engine container
+- [DenyRules](https://docs.airlock.com/microgateway/4.4/#data/1667549240920.html) : Block malicious requests to upstream web applications
+- [HeaderRewrites](https://docs.airlock.com/microgateway/4.4/#data/1668421866216.html) : Header filtering/rewriting
 
 ```bash
 kubectl apply -k microgateway-configuration/
@@ -148,7 +148,7 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 
 * [Getting Started](https://docs.airlock.com/microgateway/latest/#data/1660804708742.html)
 * [System Architecture](https://docs.airlock.com/microgateway/latest/#data/1660804709650.html)
-* [Installation](https://docs.airlock.com/microgateway/latest/#data/1660804708637.html)
+* [Installation](https://docs.airlock.com/microgateway/latest/#data/1726159368039.html)
 * [Troubleshooting](https://docs.airlock.com/microgateway/latest/#data/1659430054787.html)
 * [Release Repository](https://github.com/airlock/microgateway)
 
@@ -158,6 +158,9 @@ Check the official documentation at **[docs.airlock.com](https://docs.airlock.co
 <summary>Expand for Details</summary>
 
 The instructions below provide a quick start guide for a "standard" Kubernetes setup. Setup description for, e.g., OpenShift, as well as detailed information are provided in the **[manual](https://docs.airlock.com/microgateway/latest/)**.
+> **Note**: Installing Airlock Microgateway CNI is required for this example. The example configuration is meant for the sidecar data plane mode.
+> 
+> See [documentation](https://docs.airlock.com/microgateway/4.4/#data/1660804709650.html) for more information about data plane modes.
 
 ## Prerequisites
 * [Airlock Microgateway License](#obtain-airlock-microgateway-license)
@@ -175,30 +178,31 @@ For an easy start in non-production environments, you may deploy the same cert-m
 > See [Community vs. Premium editions in detail](https://docs.airlock.com/microgateway/latest/#data/1675772882054.html) to choose the right license type.
 ### Deploy cert-manager
 ```bash
-# Install cert-manager
-kubectl apply -k https://github.com/airlock/microgateway/examples/utilities/cert-manager/?ref=4.2.1
+# Add the cert-manager repository and perform a Helm-based installation
+helm repo add jetstack https://charts.jetstack.io
+helm install cert-manager jetstack/cert-manager --version 'v1.16.1' -n cert-manager --create-namespace --set crds.enabled=true --wait
 
 # Wait for the cert-manager to be up and running
 kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kubernetes.io/instance=cert-manager
 ```
 
 ## Deploy Airlock Microgateway CNI
-> **Note**: Certain environments such as OpenShift or GKE require non-default configurations when installing the CNI plugin. Please refer to the [Release Readme](https://github.com/airlock/microgateway/) or the Chapter on [Installation in docs.airlock.com](https://docs.airlock.com/microgateway/4.2/#data/1660804708637.html)
+> **Note**: Certain environments such as OpenShift or GKE require non-default configurations when installing the CNI plugin. Please refer to the [Release Readme](https://github.com/airlock/microgateway/) or the Chapter on [Sidecar-based Microgateway installation in docs.airlock.com](https://docs.airlock.com/microgateway/4.4/#data/1726159368039.html)
 1. Install the CNI Plugin with Helm.
    ```bash
    # Standard setup
-   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.2.1'
+   helm install airlock-microgateway-cni -n kube-system oci://quay.io/airlockcharts/microgateway-cni --version '4.4.1'
    kubectl -n kube-system rollout status daemonset -l app.kubernetes.io/instance=airlock-microgateway-cni
    ```
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
    ```bash
    # Standard setup
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.2.1'
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.1'
    helm test airlock-microgateway-cni -n kube-system --logs
-   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.2.1'
+   helm upgrade airlock-microgateway-cni -n kube-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway-cni --version '4.4.1'
    ```
 
-   Consult our [documentation](https://docs.airlock.com/microgateway/4.2/#data/1699611533587.html) in case of any installation error.
+   Consult our [documentation](https://docs.airlock.com/microgateway/4.4/#data/1659430054787.html) in case of any installation error.
 ## Deploy Airlock Microgateway Operator
 
 > This guide assumes a microgateway-license.txt file is present in the working directory.
@@ -212,14 +216,14 @@ kubectl -n cert-manager wait --for=condition=ready --timeout=600s pod -l app.kub
    kubectl -n airlock-microgateway-system create secret generic airlock-microgateway-license --from-file=microgateway-license.txt
 
    # Install Operator (CRDs are included via the standard Helm 3 mechanism, i.e. Helm will handle initial installation but not upgrades)
-   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.2.1' --wait
+   helm install airlock-microgateway -n airlock-microgateway-system oci://quay.io/airlockcharts/microgateway --version '4.4.1' --wait
    ```
 
 2. (Recommended) You can verify the correctness of the installation with `helm test`.
    ```bash
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.1'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=true --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.1'
    helm test airlock-microgateway -n airlock-microgateway-system --logs
-   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.2.1'
+   helm upgrade airlock-microgateway -n airlock-microgateway-system --set tests.enabled=false --reuse-values oci://quay.io/airlockcharts/microgateway --version '4.4.1'
    ```
 
 ## License
