@@ -1,3 +1,6 @@
+# DEPRECATED
+This repository was deprecated on 2025-01-21. It is no longer maintained. As a replacement we created a [Airlock Microgateway running example](https://github.com/airlock/microgateway-running-example).
+
 # Microgateway Demo: Juiceshop
 
 This repository contains and describes an example setup of the OWASP Juice-Shop as a vulnerable backend that can be protected using the Web Application and API Protection Solution Airlock Microgateway.
